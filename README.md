@@ -185,7 +185,13 @@ Este projeto está sob a licença [especificar licença].
 
 ## 👤 Autor
 
-[Seu nome]
+Prof. Jose George
+
+1.
+2.
+3.
+4.
+5.
 
 ---
 
