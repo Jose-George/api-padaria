@@ -185,7 +185,7 @@ Este projeto está sob a licença [especificar licença].
 
 ## 👤 Autor
 
-Prof. Jose George
+Professor: Jose George
 
 1.
 2.
