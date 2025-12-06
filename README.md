@@ -188,7 +188,7 @@ Este projeto está sob a licença [especificar licença].
 Professor: Jose George
 
 1.
-2.
+2. Edivan Silva
 3.
 4.
 5.
