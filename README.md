@@ -187,10 +187,10 @@ Este projeto está sob a licença [especificar licença].
 
 Professor: Jose George
 
-1.
+1. Loana
 2. Edivan Silva dos Santos
 3. Lara H. B. T. Pereira
-4.
+4. Lillya Maria Mélo de Lima
 5. Maria Clara
 6. Bruno
 
