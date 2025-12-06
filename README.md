@@ -191,7 +191,7 @@ Professor: Jose George
 2. Edivan Silva dos Santos
 3. Lara H. B. T. Pereira
 4.
-5.
+5. Maria Clara
 6. Bruno
 
 ---
