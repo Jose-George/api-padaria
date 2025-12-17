@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'suppliers', #Add app suppliers By Edivan
     'products',
+    'users',
     'rest_framework',
 ]
 
