@@ -1,0 +1,158 @@
+
+__________________________________________________________________ MARIA CLARA e EDIVAN
+
+
+📋 Contexto:
+   - Implementar filtros para facilitar consultas de produtos
+   - Permitir busca por validade, fornecedor e nome do produto
+
+📦 Passo 1: Instalação e Configuração do django-filter.  -> MARIA CLARA e EDIVAN
+
+   ✓ Instalar biblioteca:
+     → pip install django-filter
+   
+   ✓ Registrar no settings.py:
+     → Adicionar 'django_filters' em INSTALLED_APPS
+     → Adicionar configuração:
+       REST_FRAMEWORK = {
+           'DEFAULT_FILTER_BACKENDS': [
+               'django_filters.rest_framework.DjangoFilterBackend',
+           ],
+       }
+
+📦 Passo 2: Implementação de Filtros na ViewSet -> MARIA CLARA e EDIVAN
+
+   ✓ Configurar filtros:
+     → Arquivo: products/views.py
+     → Adicionar import: from django_filters.rest_framework import DjangoFilterBackend
+     → Na classe ProductViewSet, adicionar:
+       • filter_backends = [DjangoFilterBackend]
+       • filterset_fields = ['validade', 'supplier', 'name']
+       • (Ou usar search_fields para busca parcial no nome)
+   
+   ✓ Configuração completa exemplo:
+     class ProductViewSet(viewsets.ModelViewSet):
+         queryset = Product.objects.select_related('supplier').all()
+         serializer_class = ProductSerializer
+         filter_backends = [DjangoFilterBackend]
+         filterset_fields = ['validade', 'supplier', 'name']
+         # Opcional: busca parcial no nome
+         # search_fields = ['name']
+         # search_fields = ['name', 'lote']
+   
+   ✓ Testar Filtros:
+     → GET /api/products/?validade=2025-12-31
+     → GET /api/products/?supplier=1
+     → GET /api/products/?name=Pão
+     → GET /api/products/?validade=2025-12-31&supplier=1&name=Pão
+
+
+__________________________________________________________________ BRUNO e LOANA
+
+
+📋 Contexto:
+   - Criar funcionalidade para dar baixa em um produto (reduzir estoque).
+   - O sistema deve impedir que o estoque fique negativo.
+
+📦 Passo 1: Criar a Action na ViewSet. -> BRUNO e LOANA
+   
+   ✓ Onde editar:
+     → Arquivo: products/views.py
+   
+   ✓ Imports necessários (adicione no topo do arquivo se não houver):
+     → from rest_framework.decorators import action
+     → from rest_framework.response import Response
+     → from rest_framework import status
+
+   ✓ Adicionar o método na classe ProductViewSet:
+     (Copie e cole este código dentro da classe ProductViewSet, observe a indentação)
+
+     @action(detail=True, methods=['post'], url_path='baixar-estoque')
+     def baixar_estoque(self, request, pk=None):
+         # 1. Pegar o produto pelo ID (pk)
+         produto = self.get_object()
+
+         # 2. Verificar se tem estoque suficiente
+         if produto.qtd_atual > 0:
+             # 3. Reduzir a quantidade
+             produto.qtd_atual -= 1
+             produto.save()
+             return Response(
+                 {'status': 'Estoque atualizado', 'qtd_atual': produto.qtd_atual}, 
+                 status=status.HTTP_200_OK
+             )
+         else:
+             # 4. Retornar erro se não tiver estoque
+             return Response(
+                 {'error': 'Produto não está mais em estoque'}, 
+                 status=status.HTTP_400_BAD_REQUEST
+             )
+
+📦 Passo 2: Testar a Nova Funcionalidade -> BRUNO e LOANA
+
+   ✓ Como testar (usando Postman ou Insomnia):
+     → Método: POST
+     → URL: http://localhost:8000/api/products/<ID_DO_PRODUTO>/baixar-estoque/
+       (Substitua <ID_DO_PRODUTO> pelo ID real de um produto, ex: 1)
+     
+   ✓ Resultados esperados:
+     → Sucesso: Status 200 OK e JSON com a nova quantidade.
+     → Erro: Status 400 Bad Request se a quantidade atual for 0.
+
+
+__________________________________________________________________ LARA e LILLYA
+
+
+📋 Contexto:
+   - O sistema deve gerar relatórios consolidados de produtos.
+   - Categorias: Ativos, Vencidos, Próximos do Vencimento, Estoque Baixo.
+
+📦 Passo 1: Criar a Action de Relatório -> LARA e LILLYA
+
+   ✓ Onde editar:
+     → Arquivo: products/views.py
+
+   ✓ Imports necessários (adicione no topo se faltar):
+     → from datetime import date, timedelta
+     → from django.db.models import F
+
+   ✓ Adicionar o método na classe ProductViewSet:
+     (Copie e cole este código dentro da classe ProductViewSet)
+
+     @action(detail=False, methods=['get'], url_path='relatorio-geral')
+     def relatorio_geral(self, request):
+         hoje = date.today()
+         margem = timedelta(days=7) # Considera 7 dias para próximo vencimento
+
+         # 1. Produtos Vencidos
+         vencidos = Product.objects.filter(validade__lt=hoje)
+
+         # 2. Produtos Próximos do Vencimento (entre hoje e daqui a 7 dias)
+         proximos = Product.objects.filter(validade__gte=hoje, validade__lte=hoje + margem)
+
+         # 3. Produtos com Estoque Baixo (qtd_atual <= qtd_minima)
+         estoque_baixo = Product.objects.filter(qtd_atual__lte=F('qtd_minima'))
+
+         # 4. Produtos Ativos (Exemplo: validade em dia)
+         ativos = Product.objects.filter(validade__gte=hoje)
+
+         data = {
+             'total_ativos': ativos.count(),
+             'total_vencidos': vencidos.count(),
+             'total_proximos': proximos.count(),
+             'total_estoque_baixo': estoque_baixo.count(),
+             'lista_estoque_baixo': [p.name for p in estoque_baixo],
+             'lista_vencidos': [p.name for p in vencidos]
+         }
+         
+         return Response(data, status=status.HTTP_200_OK)
+
+📦 Passo 2: Testar o Relatório -> LARA e LILLYA
+
+   ✓ Como testar:
+     → Método: GET
+     → URL: http://localhost:8000/api/products/relatorio-geral/
+   
+   ✓ Verificar resposta:
+     → Deve retornar status 200 OK
+     → O JSON deve conter os totais e as listas de nomes conforme codificado.
