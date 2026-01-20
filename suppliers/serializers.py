@@ -7,7 +7,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Supplier
-        fields = '_all_'
+        fields = ['id', 'nome', 'email', 'telefone', 'cnpj']
 
     def validate_cnpj(self, value):
 
