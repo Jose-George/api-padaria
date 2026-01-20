@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'products',
     'users',
     'rest_framework',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Padaria',
+    'DESCRIPTION': 'Documentação da API do sistema de padaria',
+    'VERSION': '1.0.0',
 }
 
 AUTH_USER_MODEL = 'users.User'
