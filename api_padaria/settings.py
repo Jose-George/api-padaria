@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'products',
     'users',
     'rest_framework',
+    'django_apscheduler', #Add APScheduler
     'drf_spectacular',
 ]
 
@@ -144,3 +145,16 @@ SPECTACULAR_SETTINGS = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+# APScheduler Configuration 2026
+SCHEDULER_CONFIG = {
+    "apscheduler.jobstores.default": {
+        "class": "django_apscheduler.jobstores:DjangoJobStore"
+    },
+    'apscheduler.executors.processpool': {
+        "type": "threadpool"
+    },
+}
+
+SCHEDULER_AUTOSTART = True
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"

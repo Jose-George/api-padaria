@@ -15,3 +15,12 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
+
+#Add mensagem log model
+class LogMensagem(models.Model):
+    produto = models.ForeignKey(Product, on_delete=models.CASCADE)
+    mensagem = models.TextField()
+    data_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Mensagem enviada para {self.produto.name}"
