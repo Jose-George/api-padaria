@@ -5,7 +5,9 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 from .models import Product
 from .serializers import ProductSerializer
@@ -16,9 +18,11 @@ from .serializers import ProductSerializer
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.select_related('supplier').all()
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['validade', 'supplier', 'name']
-
+    ordering_fields = ['name', 'validade', 'qtd_atual']
+    ordering = ['name']
+    
     @action(detail=False, methods=['get'], url_path='relatorio-geral')
     def relatorio_geral(self, request):
          hoje = date.today()
