@@ -50,3 +50,24 @@ class ProductViewSet(viewsets.ModelViewSet):
          }
          
          return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path='baixar-estoque')
+    def baixar_estoque(self, request, pk=None):
+         # 1. Pegar o produto pelo ID (pk)
+         produto = Product.objects.get(id=pk)
+
+         # 2. Verificar se tem estoque suficiente
+         if produto.qtd_atual > 0:
+             # 3. Reduzir a quantidade
+             produto.qtd_atual -= 1
+             produto.save()
+             return Response(
+                 {'status': 'Estoque atualizado', 'qtd_atual': produto.qtd_atual}, 
+                 status=status.HTTP_200_OK
+             )
+         else:
+             # 4. Retornar erro se não tiver estoque
+             return Response(
+                 {'error': 'Produto não está mais em estoque'}, 
+                 status=status.HTTP_400_BAD_REQUEST
+             )
