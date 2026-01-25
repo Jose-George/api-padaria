@@ -37,7 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'suppliers', #Add app suppliers By Edivan
+    'django_filters', #Add django-filters
+    'products',
+    'users',
     'rest_framework',
+    'django_apscheduler', #Add APScheduler
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +128,33 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+
+    'DEFAULT_SCHEMA_CLASS' : 'drf_spectacular.openapi.AutoSchema',
+    
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Padaria',
+    'DESCRIPTION': 'Documentação da API do sistema de padaria',
+    'VERSION': '1.0.0',
+}
+
+AUTH_USER_MODEL = 'users.User'
+
+# APScheduler Configuration 2026
+SCHEDULER_CONFIG = {
+    "apscheduler.jobstores.default": {
+        "class": "django_apscheduler.jobstores:DjangoJobStore"
+    },
+    'apscheduler.executors.processpool': {
+        "type": "threadpool"
+    },
+}
+
+SCHEDULER_AUTOSTART = True
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
